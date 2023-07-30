@@ -10,6 +10,9 @@ export default {
             legacy: true
         }
 
+        const prefix = settings.prefix;
+        const client = settings.client;
+
         if (!message.content.startsWith(prefix) || message.author.bot) return;
 
         const params = message.content.slice(prefix.length).split(' ');
