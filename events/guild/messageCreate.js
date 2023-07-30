@@ -4,15 +4,10 @@ import InteractionAdapter from '../../commands/InteractionAdapter.js';
 export default {
     name: Events.MessageCreate,
     legacy: true,
-    execute(message, settings) {
-        const args = {
-            ...settings,
-            message: message,
-            legacy: true
-        }
-
-        const prefix = settings.prefix;
-        const client = settings.client;
+    execute(interactionAdapter) {
+        const message = interactionAdapter.responseMedium;
+        const prefix = interactionAdapter.prefix;
+        const client = interactionAdapter.client;
 
         if (!message.content.startsWith(prefix) || message.author.bot) return;
 
@@ -20,7 +15,6 @@ export default {
         const cmd = params.shift().toLowerCase();
         const command = client.commands.get(cmd);
 
-        const interactionAdapter = new InteractionAdapter(args);
         if (command) command.execute(interactionAdapter);
     }
 };
