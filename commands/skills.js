@@ -22,42 +22,61 @@ export default {
 
     legacyDescription: 'Enclose the status with quotation marks (").',
 
-    async execute(responseMedium, cache) {
-        var adapter = responseMedium;
-        var user;
-        var student;
-        if (responseMedium.legacy) {
-            adapter = responseMedium.message;
-            const args = adapter.content.split(" ");
-            if (args.length < 3) {
-                await adapter.reply(
-                    "Error: Not enough parameters.\n" +
-                    "Please use the command as follows:\n" +
-                    `\`${process.env.PREFIX + this.examples[0]}\``
-                )
-                return;
-            }
-            user = args[1]; student = args[2];
+    async execute(interactionAdapter) {
+        const cache = interactionAdapter.cache;
+        const responseMedium = interactionAdapter.responseMedium;
 
+        // params
+        const paramKeys = [
+            'user', 
+            'student'
+        ];
+        var user; var student;
+        const args = interactionAdapter.getArgs(paramKeys);
+
+        if (args.length < 2) {
+            await responseMedium.reply(
+                "Error: Not enough parameters.\n" +
+                "Please use the command as follows:\n" +
+                `\`${process.env.PREFIX + this.examples[0]}\``
+            )
+            return;
         } else {
-            user = adapter.getString('user');
-            student = adapter.getString('student');
+            // paramKeys order is preserved
+            user = args[0]; student = args[1];
         }
 
-
-        // check if given user was a discord mention
+        // check if given user is a discord mention
         const userInfo = await helper.isRegistered(user);
         if (userInfo.found) {
             user = userInfo.user;
-        } else {
-            await adapter.reply('User <@' + user + '> is not registered to any username on the sheets.');
+        } else if (!userInfo.notMention) {
+            await responseMedium.reply('User <@' + user + '> is not registered to any username on the sheets.');
             return;
         }
 
-        
+        // find student sheet & user
+        const res = await sheets.getStudentCacheKey(cache, student);
+        if (!res.found) {
+            await responseMedium.reply(`Student ${student} not found.`);
+            return
+        }
 
+        const cacheKey = res.key;
+        const range = cache.keys[cacheKey].range;
+        var sheetData = await sheets.getRange(cache, range);
+        sheetData = sheetData.data.values;
 
-        
-        await adapter.reply(memberSheet);
+        for (const row of sheetData) {
+            if (row[0] && row[0].toLowerCase() === user.toLowerCase()) {
+                await responseMedium.reply(
+                    `Weapon status of student \`${res.name}\` belonging to player \`${row[0]}\`:\n` +
+                    '> ' + row[res.searchIndex]
+                    );
+                return;
+            }
+        }
+
+        await responseMedium.reply(`Student \`${student}\` not found.`);
     }
 }

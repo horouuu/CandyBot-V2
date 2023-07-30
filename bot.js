@@ -23,7 +23,29 @@ const settings = {
     client: client,
     discord: Discord,
     prefix: process.env.PREFIX,
-    cache: {}
+    cache: {
+        keys: {
+            red: {
+                key: process.env.REDRANGE.split('!')[0],
+                range: process.env.REDRANGE,
+                charRange: process.env.REDRANGECHAR
+            },
+            yellow: {
+                key: process.env.YELLOWRANGE.split('!')[0],
+                range: process.env.YELLOWRANGE,
+                charRange: process.env.YELLOWRANGECHAR
+            },
+            blue: {
+                key: process.env.BLUERANGE.split('!')[0],
+                range: process.env.BLUERANGE,
+                charRange: process.env.BLUERANGECHAR
+            },
+            member: {
+                key: process.env.MEMBERRANGE.split('!')[0],
+                range: process.env.MEMBERRANGE
+            }
+        }
+    }
 }
 
 bindEvents(client, settings);
