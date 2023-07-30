@@ -22,7 +22,8 @@ client.commands = new DiscordCollection();
 const settings = {
     client: client,
     discord: Discord,
-    prefix: "%"
+    prefix: "%",
+    cache: {}
 }
 
 bindEvents(client, settings);
