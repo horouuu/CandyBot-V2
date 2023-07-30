@@ -9,7 +9,12 @@ export default {
         'ping'
     ],
     
-    async execute(interaction) {
-        await interaction.reply('Pong!');
+    async execute(responseMedium) {
+        var adapter = responseMedium;
+        if (responseMedium.legacy) {
+            adapter = responseMedium.message;
+        }
+
+        await adapter.reply('Pong!');
     }
 };

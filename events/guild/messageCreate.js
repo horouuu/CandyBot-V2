@@ -4,14 +4,17 @@ export default {
     name: Events.MessageCreate,
     legacy: true,
     execute(message, settings) {
-        const client = settings.client;
-        const discord = settings.discord;
-        const prefix = settings.prefix;
+        const args = {
+            ...settings,
+            message: message,
+            legacy: true
+        }
 
         if (!message.content.startsWith(prefix) || message.author.bot) return;
 
         const params = message.content.slice(prefix.length).split(' ');
         const cmd = params.shift().toLowerCase();
-        if (cmd) cmd.execute(client, message, params, discord);
+        const command = client.commands.get(cmd);
+        if (command) command.execute(args);
     }
 };
