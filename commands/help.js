@@ -1,4 +1,5 @@
 import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
+import InteractionAdapter from "./interactionAdapter.js";
 import * as commands from './command-bundler.js';
 import dotenv from 'dotenv';
 
@@ -14,20 +15,17 @@ export default {
     ],
 
     async execute(responseMedium) {
-        var adapter = responseMedium;
-        var prefix = '/'
-        var user = responseMedium.user;
-        if (responseMedium.legacy) {
-            adapter = responseMedium.message;
-            prefix = process.env.PREFIX;
-            user = responseMedium.message.author.user;
-        }
+        var adapter = new InteractionAdapter(responseMedium);
+        var interaction = adapter.getResponseMedium();
+        var prefix = adapter.getPrefix();
+        var user = adapter.getUser();
+        var client = adapter.getClient();
 
         var helpEmbed = new EmbedBuilder()
             .setColor(0x0099FF)
             .setTitle('Commands')
             .setDescription('Contact <@' + process.env.GODSEL + '> for further assistance.')
-            .setThumbnail(responseMedium.client.user.displayAvatarURL())
+            .setThumbnail(client.user.displayAvatarURL())
             .setTimestamp()
             .setFooter({ text: 'Requested by: '+ user});
         
@@ -43,7 +41,7 @@ export default {
             helpEmbed.addFields({ name: prefix + name, value: exampleText })
         }
 
-        await adapter.reply({
+        await interaction.reply({
             embeds: [helpEmbed]
         });
     }

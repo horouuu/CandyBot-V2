@@ -65,5 +65,21 @@ export default {
     
         const cacheKey = range.split('!')[0];
         cache[cacheKey]['stale'] = true;
+    },
+
+    async getStudentCacheKey(cache, char) {
+        ['red', 'yellow', 'blue'].forEach((label) => {
+            const range = cache.keys[label].charRange;
+            const charData = this.getRange(cache, range, 'chars');
+            if (charData.data.values[0].includes(char)) {
+                return {
+                    found: true,
+                    key: label,
+                    searchIndex: charData.data.values[0].indexOf(char) + 1
+                };
+            }
+        })
+
+        return { found: false };
     }
 }

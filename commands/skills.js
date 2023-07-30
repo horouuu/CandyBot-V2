@@ -22,8 +22,9 @@ export default {
 
     legacyDescription: 'Enclose the status with quotation marks (").',
 
-    async execute(responseMedium, cache) {
-        var adapter = responseMedium;
+    async execute(responseMedium) {
+        const cache = responseMedium.cache;
+        var adapter = responseMedium.interaction;
         var user;
         var student;
         if (responseMedium.legacy) {
@@ -40,24 +41,40 @@ export default {
             user = args[1]; student = args[2];
 
         } else {
-            user = adapter.getString('user');
-            student = adapter.getString('student');
+            user = adapter.options.getString('user');
+            student = adapter.options.getString('student');
         }
 
 
-        // check if given user was a discord mention
+        // check if given user is a discord mention
         const userInfo = await helper.isRegistered(user);
         if (userInfo.found) {
             user = userInfo.user;
-        } else {
+        } else if (!userInfo.notMention) {
             await adapter.reply('User <@' + user + '> is not registered to any username on the sheets.');
             return;
         }
 
-        
+        // find student sheet & user
+        console.log(cache)
+        const res = await sheets.getStudentCacheKey(cache, student);
+        if (!res.found) {
+            await adapter.reply(`Student ${student} not found.`);
+            return
+        }
 
-
+        const cacheKey = res.key;
+        const range = cache.keys[cacheKey].range;
         
-        await adapter.reply(memberSheet);
+        const sheetData = await sheets.getRange(cache, range).data.values;
+
+        for (const row of sheetData) {
+            if (row.includes(user)) {
+                await adapter.reply(row[res.searchIndex])
+                return;
+            }
+        }
+
+        await adapter.reply("not found");
     }
 }

@@ -10,7 +10,7 @@ export default {
     ],
     
     async execute(responseMedium) {
-        var adapter = responseMedium;
+        var adapter = responseMedium.interaction;
         if (responseMedium.legacy) {
             adapter = responseMedium.message;
         }
