@@ -1,4 +1,5 @@
 import sheets from '../sheets/sheets.js';
+import helper from './command-helpers.js';
 import { SlashCommandBuilder } from 'discord.js';
 
 export default {
@@ -45,7 +46,16 @@ export default {
 
 
         // check if given user was a discord mention
-        const memberSheet = await sheets.getRange(cache, process.env.MEMBERRANGE);
+        const userInfo = await helper.isRegistered(user);
+        if (userInfo.found) {
+            user = userInfo.user;
+        } else {
+            await adapter.reply('User <@' + user + '> is not registered to any username on the sheets.');
+            return;
+        }
+
+        
+
 
         
         await adapter.reply(memberSheet);
