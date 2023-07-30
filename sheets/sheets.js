@@ -7,8 +7,8 @@ export default {
             scopes: 'https://www.googleapis.com/auth/spreadsheets'
         });
     
-        const client = await auth.getClient(),
-    
+        const client = await auth.getClient();
+        
         return {
             auth: auth,
             sheets: google.sheets({
