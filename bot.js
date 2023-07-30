@@ -22,7 +22,7 @@ client.commands = new DiscordCollection();
 const settings = {
     client: client,
     discord: Discord,
-    prefix: "%",
+    prefix: process.env.PREFIX,
     cache: {}
 }
 
