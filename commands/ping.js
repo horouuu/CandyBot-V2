@@ -2,19 +2,15 @@ import { SlashCommandBuilder } from 'discord.js';
 
 export default {
     data: new SlashCommandBuilder()
-    .setName('ping')
-    .setDescription('Replies with "Pong!"'),
-
+        .setName('ping')
+        .setDescription('Replies with "Pong!"'),
+    
     examples: [
         'ping'
     ],
     
-    async execute(responseMedium) {
-        var adapter = responseMedium.interaction;
-        if (responseMedium.legacy) {
-            adapter = responseMedium.message;
-        }
-
-        await adapter.reply('Pong!');
+    async execute(interactionAdapter) {
+        const responseMedium = interactionAdapter.responseMedium;
+        await responseMedium.reply('Pong!');
     }
 };

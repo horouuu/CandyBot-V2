@@ -14,12 +14,11 @@ export default {
         'help'
     ],
 
-    async execute(responseMedium) {
-        var adapter = new InteractionAdapter(responseMedium);
-        var interaction = adapter.getResponseMedium();
-        var prefix = adapter.getPrefix();
-        var user = adapter.getUser();
-        var client = adapter.getClient();
+    async execute(interactionAdapter) {
+        var responseMedium = interactionAdapter.responseMedium;
+        var prefix = interactionAdapter.prefix;
+        var user = interactionAdapter.user;
+        var client = interactionAdapter.client;
 
         var helpEmbed = new EmbedBuilder()
             .setColor(0x0099FF)
@@ -27,7 +26,7 @@ export default {
             .setDescription('Contact <@' + process.env.GODSEL + '> for further assistance.')
             .setThumbnail(client.user.displayAvatarURL())
             .setTimestamp()
-            .setFooter({ text: 'Requested by: '+ user});
+            .setFooter({ text: 'Requested by: '+ user.tag});
         
         for (const command in commands) {
             const cmd = commands[command];
@@ -41,7 +40,7 @@ export default {
             helpEmbed.addFields({ name: prefix + name, value: exampleText })
         }
 
-        await interaction.reply({
+        await responseMedium.reply({
             embeds: [helpEmbed]
         });
     }

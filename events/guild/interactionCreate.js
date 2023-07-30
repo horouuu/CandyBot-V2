@@ -1,4 +1,5 @@
 import { Events } from 'discord.js';
+import InteractionAdapter from '../../commands/InteractionAdapter';
 
 export default {
     name: Events.InteractionCreate,
@@ -17,7 +18,9 @@ export default {
                 interaction: interaction,
                 cache: cache
             }
-            await command.execute(args);
+
+            const interactionAdapter = new InteractionAdapter(args);
+            await command.execute(interactionAdapter);
         } catch (error) {
             console.error(`Error encountered while trying to execute ${interaction.commandName}`);
             console.error(error);

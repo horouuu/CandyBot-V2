@@ -9,12 +9,8 @@ export default {
         'sheets'
     ],
 
-    async execute(responseMedium) {
-        var adapter = responseMedium.interaction;
-        if (responseMedium.legacy) {
-            adapter = responseMedium.message;
-        }
-
-        await adapter.reply(process.env.SHEETSLINK);
+    async execute(interactionAdapter) {
+        const responseMedium = interactionAdapter.responseMedium;
+        await responseMedium.reply(process.env.SHEETSLINK);
     }
 }

@@ -1,22 +1,28 @@
 class InteractionAdapter {
     constructor(responseMedium) {
-        this.responseMedium = responseMedium;
+        this._responseMedium = responseMedium;
         this.legacy = responseMedium.legacy || false;
     }
 
     get client() {
-        return this.responseMedium.client;
+        if (this.legacy) {
+            return this._responseMedium.client; 
+        } else {
+            return this._responseMedium.interaction.client;
+        }
     }
 
     get user() {
         if (this.legacy) {
-            return this.responseMedium.message.author.user;
+            return this._responseMedium.message.author;
+        } else {
+            return this._responseMedium.interaction.user;
         }
     }
 
     get prefix() {
         if (this.legacy) {
-            return this.responseMedium.prefix;
+            return this._responseMedium.prefix;
         } else {
             return '/';
         }
@@ -24,18 +30,22 @@ class InteractionAdapter {
 
     get responseMedium() {
         if (this.legacy) {
-            return this.responseMedium.message;
+            return this._responseMedium.message;
         } else {
-            return this.responseMedium.interaction;
+            return this._responseMedium.interaction;
         }
     }
 
+    set responseMedium(responseMedium) {
+        this._responseMedium = responseMedium;
+    }
+
     get cache() {
-        return this.responseMedium.cache;
+        return this._responseMedium.cache;
     }
 
     get discordInstance() {
-        return this.responseMedium.discord;
+        return this._responseMedium.discord;
     }
 }
 
