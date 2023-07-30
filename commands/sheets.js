@@ -5,6 +5,10 @@ export default {
         .setName('sheets')
         .setDescription('Get a link to the guild sheets.'),
 
+    examples: [
+        'sheets'
+    ],
+
     async execute(responseMedium) {
         var adapter = responseMedium;
         if (responseMedium.legacy) {
