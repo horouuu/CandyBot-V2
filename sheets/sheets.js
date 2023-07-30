@@ -3,7 +3,7 @@ import { google } from 'googleapis';
 export default {
     async getClient() {
         const auth = new google.auth.GoogleAuth({
-            keyFile: 'credentials.json',
+            keyFile: './sheets/credentials.json',
             scopes: 'https://www.googleapis.com/auth/spreadsheets'
         });
     
@@ -18,7 +18,7 @@ export default {
         }
     },
     
-    async getRange(cache, range) {
+    async getRange(cache, range, cacheLabel='skills') {
         const google = cache.google;
         const auth = google.auth;
         const spreadsheetId = process.env.SPREADSHEET;
@@ -26,17 +26,22 @@ export default {
     
         const cacheKey = range.split('!')[0];
         if (!cache[cacheKey] || cache[cacheKey].stale) {
-            const newData = await google.sheets.spreadsheets.values.get({
-                auth,
-                spreadsheetId,
-                range: range
-            })
-    
-            cache[range] = newData;
-            cache[range]['stale'] = false;
-            out = newData;
+            try {
+                const newData = await google.sheets.spreadsheets.values.get({
+                    auth,
+                    spreadsheetId,
+                    range: range
+                })
+
+                cache[cacheKey][cacheLabel] = newData;
+                cache[cacheKey]['stale'] = false;
+                out = newData;
+            } catch (err) {
+                console.error(err);
+                return;
+            }
         } else {
-            out = cache[range];
+            out = cache[cacheKey][cacheLabel];
         }
     
         return out;
