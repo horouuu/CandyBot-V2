@@ -48,19 +48,37 @@ class InteractionAdapter {
         return this._responseMedium.discord;
     }
 
-    getArgs(opts) {
+    getArgs(params) {
         const medium = this.responseMedium;
+        const opts = params.paramKeys;
+        const paramsErr = {
+            name: "notEnoughParamsError", 
+            message: "Error: Not enough parameters.\n" +
+            "Please use the command as follows:\n" +
+            `\`${params.example}\``
+        }
+        var out = {};
         if (this.legacy) {
             const splitMessage = medium.content.split(' ');
             const args = splitMessage.slice(1, splitMessage.length);
-            return args;
-        } else {
-            var res = [];
-            for (const opt of opts) {
-                res.push(medium.options.getString(opt));
+            if (args.length < opts.length) {
+                throw paramsErr;
             }
-            return res;
+
+            for (var i = 0; i < opts.length; i++) {
+                out[opts[i]] = args[i];
+            }
+        } else {
+            for (const opt of opts) {
+                out[opt] = medium.options.getString(opt);
+            }
         }
+
+        if (out.length < params.minParams) {
+            throw paramsErr;
+        }
+
+        return out;
     }
 }
 

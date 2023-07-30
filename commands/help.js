@@ -25,7 +25,7 @@ export default {
             .setDescription('Contact <@' + process.env.GODSEL + '> for further assistance.')
             .setThumbnail(client.user.displayAvatarURL())
             .setTimestamp()
-            .setFooter({ text: 'Requested by: '+ user.tag});
+            .setFooter({ text: 'Requested by: '+ user.tag, iconURL: user.displayAvatarURL() });
         
         for (const command in commands) {
             const cmd = commands[command];

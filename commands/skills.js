@@ -14,7 +14,8 @@ export default {
             option.setName('student')
                 .setDescription('Name of the student')
                 .setRequired(true)),
-
+    
+    minInputs: 2,
     examples: [
         'skills [username] [student name]',
         'skills R Azusa'
@@ -27,23 +28,24 @@ export default {
         const responseMedium = interactionAdapter.responseMedium;
 
         // params
-        const paramKeys = [
-            'user', 
-            'student'
-        ];
+        const params = {
+            paramKeys: [
+                'user', 
+                'student'
+            ],
+            minInputs: this.minInputs,
+            example: `\`${interactionAdapter.prefix + this.examples[0]}\``
+        }
+            
         var user; var student;
-        const args = interactionAdapter.getArgs(paramKeys);
 
-        if (args.length < 2) {
-            await responseMedium.reply(
-                "Error: Not enough parameters.\n" +
-                "Please use the command as follows:\n" +
-                `\`${process.env.PREFIX + this.examples[0]}\``
-            )
+        try {
+            const args = interactionAdapter.getArgs(params);
+            user = args.user;
+            student = args.student;
+        } catch (err) {
+            await responseMedium.reply(err.message);
             return;
-        } else {
-            // paramKeys order is preserved
-            user = args[0]; student = args[1];
         }
 
         // check if given user is a discord mention
@@ -58,7 +60,7 @@ export default {
         // find student sheet & user
         const res = await sheets.getStudentCacheKey(cache, student);
         if (!res.found) {
-            await responseMedium.reply(`Student ${student} not found.`);
+            await responseMedium.reply(`Student \`${student}\` not found.`);
             return
         }
 
@@ -77,6 +79,6 @@ export default {
             }
         }
 
-        await responseMedium.reply(`Student \`${student}\` not found.`);
+        await responseMedium.reply(`User \`${user}\` not found.`);
     }
 }

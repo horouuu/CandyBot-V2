@@ -1,4 +1,5 @@
 import * as events from '../events/event-bundler.js';
+import InteractionAdapter from '../commands/interactionAdapter.js';
 
 function bindEvents(client, settings) {
 
@@ -7,7 +8,16 @@ function bindEvents(client, settings) {
         const cache = settings.cache;
 
         if (event.legacy) {  
-            client.on(event.name, (msg) => event.execute(msg, settings));
+            client.on(event.name, (msg) => {
+                const legacyArgs = {
+                    ...settings,
+                    message: msg,
+                    legacy: true
+                }
+
+                const interactionAdapter = new InteractionAdapter(legacyArgs);
+                event.execute(interactionAdapter);
+            });
             continue;
         }
 
