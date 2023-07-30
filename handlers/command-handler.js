@@ -8,8 +8,8 @@ function setCommands(client) {
     const commandData = [];
     for (const command in commands) {
         const cmd = commands[command];
-        if (!cmd.data || !cmd.execute) {
-            console.log("Command missing data or execute property.")
+        if (!cmd.data || !cmd.execute || !cmd.examples) {
+            console.log("Command missing required properties.")
             continue;
         } else {
             client.commands.set(cmd.data.name, cmd);
