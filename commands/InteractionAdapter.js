@@ -47,6 +47,21 @@ class InteractionAdapter {
     get discordInstance() {
         return this._responseMedium.discord;
     }
+
+    getArgs(opts) {
+        const medium = this.responseMedium;
+        if (this.legacy) {
+            const splitMessage = medium.content.split(' ');
+            const args = splitMessage.slice(1, splitMessage.length);
+            return args;
+        } else {
+            var res = [];
+            for (const opt of opts) {
+                res.push(medium.options.getString(opt));
+            }
+            return res;
+        }
+    }
 }
 
 export default InteractionAdapter;

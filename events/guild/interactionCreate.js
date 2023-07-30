@@ -1,5 +1,5 @@
 import { Events } from 'discord.js';
-import InteractionAdapter from '../../commands/InteractionAdapter';
+import InteractionAdapter from '../../commands/InteractionAdapter.js';
 
 export default {
     name: Events.InteractionCreate,

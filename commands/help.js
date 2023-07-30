@@ -1,5 +1,4 @@
 import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
-import InteractionAdapter from "./interactionAdapter.js";
 import * as commands from './command-bundler.js';
 import dotenv from 'dotenv';
 
@@ -39,7 +38,7 @@ export default {
 
             helpEmbed.addFields({ name: prefix + name, value: exampleText })
         }
-
+    
         await responseMedium.reply({
             embeds: [helpEmbed]
         });

@@ -25,14 +25,13 @@ export default {
         var out;
     
         const cacheKey = range.split('!')[0];
-        if (!cache[cacheKey] || cache[cacheKey].stale) {
+        if (!cache[cacheKey] || !cache[cacheKey][cacheLabel] || cache[cacheKey].stale) {
             try {
                 const newData = await google.sheets.spreadsheets.values.get({
                     auth,
                     spreadsheetId,
                     range: range
                 })
-
                 cache[cacheKey][cacheLabel] = newData;
                 cache[cacheKey]['stale'] = false;
                 out = newData;
@@ -43,7 +42,7 @@ export default {
         } else {
             out = cache[cacheKey][cacheLabel];
         }
-    
+        
         return out;
     },
     
@@ -68,18 +67,22 @@ export default {
     },
 
     async getStudentCacheKey(cache, char) {
-        ['red', 'yellow', 'blue'].forEach((label) => {
+        const labels = ['red', 'yellow', 'blue'];
+        for (const label of labels) {
             const range = cache.keys[label].charRange;
-            const charData = this.getRange(cache, range, 'chars');
-            if (charData.data.values[0].includes(char)) {
+            const rawCharData = await this.getRange(cache, range, 'chars');
+            const charData = rawCharData.data.values[0].map((row) => row.toLowerCase());
+
+            if (charData.includes(char.toLowerCase())) {
                 return {
                     found: true,
                     key: label,
-                    searchIndex: charData.data.values[0].indexOf(char) + 1
+                    searchIndex: charData.indexOf(char) + 1,
+                    name: rawCharData.data.values[0][charData.indexOf(char.toLowerCase())]
                 };
             }
-        })
-
+        }
+            
         return { found: false };
     }
 }
